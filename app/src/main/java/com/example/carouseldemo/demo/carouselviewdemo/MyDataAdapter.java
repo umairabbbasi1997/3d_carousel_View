@@ -63,6 +63,7 @@ public class MyDataAdapter extends RecyclerView.Adapter {
         return images.size();
     }
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
          ImageView ivIcon;
@@ -82,4 +83,5 @@ public class MyDataAdapter extends RecyclerView.Adapter {
             });
         }
     }
+
 }

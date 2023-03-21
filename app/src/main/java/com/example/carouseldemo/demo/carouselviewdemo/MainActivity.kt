@@ -1,10 +1,16 @@
 package com.example.carouseldemo.demo.carouselviewdemo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.example.carouseldemo.R
+import com.example.carouseldemo.demo.carouselviewdemo.SnapOnScrollListener.Companion.NOTIFY_ON_SCROLL
 import com.gtomato.android.ui.transformer.FlatMerryGoRoundTransformer
 import com.gtomato.android.ui.widget.CarouselView
 
@@ -14,11 +20,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        var myAdapter :MyDataAdapter
         // referencing the image view from the item.xml file
         val carousel = findViewById<CarouselView>(R.id.carousel)
+        var currentPosition: Int = 0
 
-
+        val snapHelper: SnapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(carousel)
 
 
 
@@ -45,19 +53,34 @@ class MainActivity : AppCompatActivity() {
         flatMerryGoRoundTransformer.numPies = imagesArrayList.size
 
         carousel.transformer = flatMerryGoRoundTransformer
-        carousel.adapter = MyDataAdapter(applicationContext,imagesArrayList)
+        myAdapter = MyDataAdapter(applicationContext,imagesArrayList)
+        carousel.adapter = myAdapter
+
+
+        /*carousel.setOnScrollListener(object : CarouselView.OnScrollListener() {
+            override fun onScrolled(carouselView: CarouselView?, dx: Int, dy: Int) {
+                super.onScrolled(carouselView, dx, dy)
+                if (carouselView != null) {
+                    currentPosition = carouselView.currentPosition
+                    Toast.makeText(this@MainActivity, "Position $currentPosition", Toast.LENGTH_LONG).show()
+                }
+            }
+        })*/
+
+        carousel.adapter
 
         carousel.gravity = Gravity.CENTER
         carousel.isInfinite = true
-        carousel.setEnableFling(false);
-        carousel.setClipChildren(true);
+        carousel.setEnableFling(false)
+        carousel.setClipChildren(true)
         carousel.clipToPadding = false
 
+        carousel.addOnScrollListener(SnapOnScrollListener(snapHelper, NOTIFY_ON_SCROLL) { position ->
+            Toast.makeText(this@MainActivity, "Position $position", Toast.LENGTH_LONG).show()
+        })
 
 
-
-        (carousel.adapter as MyDataAdapter).notifyDataSetChanged();
-
+        (carousel.adapter as MyDataAdapter).notifyDataSetChanged()
 
 
     }
